@@ -15,6 +15,13 @@ class DeliverymanController {
         .required(),
     });
 
+    const userExists = await Deliveryman.findOne({
+      where: { email: req.body.email },
+    });
+
+    if (userExists)
+      return res.status(400).json({ error: 'Email already exists' });
+
     if (!(await schema.isValid(req.body)))
       return res.status(400).json({ error: 'Bad Request' });
 
@@ -35,6 +42,10 @@ class DeliverymanController {
       return res.status(400).json({ error: 'Bad Request' });
 
     const deliveryman = await Deliveryman.findByPk(req.params.id);
+
+    if (!deliveryman)
+      return res.status(400).json({ error: 'Unable to update record' });
+
     const { id, name, email, avatar_id } = await deliveryman.update(req.body);
 
     return res.json({ id, name, email, avatar_id });
