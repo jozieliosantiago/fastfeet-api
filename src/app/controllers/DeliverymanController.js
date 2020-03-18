@@ -13,13 +13,14 @@ class DeliverymanController {
       email: Yup.string()
         .email()
         .required(),
+      avatar_id: Yup.number(),
     });
 
-    const userExists = await Deliveryman.findOne({
+    const emailExists = await Deliveryman.findOne({
       where: { email: req.body.email },
     });
 
-    if (userExists)
+    if (emailExists)
       return res.status(400).json({ error: 'Email already exists' });
 
     if (!(await schema.isValid(req.body)))
