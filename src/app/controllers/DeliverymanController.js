@@ -1,5 +1,6 @@
 import * as Yup from 'yup';
 import Deliveryman from '../models/Deliveryman';
+import File from '../models/File';
 
 class DeliverymanController {
   async index(req, res) {
@@ -16,9 +17,14 @@ class DeliverymanController {
       avatar_id: Yup.number(),
     });
 
+    const { name, email, avatar_id } = req.body;
+
     const emailExists = await Deliveryman.findOne({
-      where: { email: req.body.email },
+      where: { email },
     });
+
+    if (avatar_id && !(await File.findByPk(avatar_id)))
+      return res.status(400).json({ error: 'Avatar not found' });
 
     if (emailExists)
       return res.status(400).json({ error: 'Email already exists' });
@@ -26,7 +32,11 @@ class DeliverymanController {
     if (!(await schema.isValid(req.body)))
       return res.status(400).json({ error: 'Bad Request' });
 
-    const deliveryman = await Deliveryman.create(req.body);
+    const deliveryman = await Deliveryman.create({
+      name,
+      email,
+      avatar_id,
+    });
     return res.json(deliveryman);
   }
 
