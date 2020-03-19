@@ -1,4 +1,6 @@
 import * as Yup from 'yup';
+import { format } from 'date-fns';
+import pt from 'date-fns/locale/pt';
 import Order from '../models/Order';
 import Recipient from '../models/Recipient';
 import Deliveryman from '../models/Deliveryman';
@@ -37,10 +39,26 @@ class OrderController {
       recipient_id,
     });
 
+    const formattedDate = format(order.createdAt, "dd'/'MM'/'yyyy' 'HH:mm:ss", {
+      locale: pt,
+    });
+
     Mail.sendmail({
       to: `${deliveryman.name} <${deliveryman.email}>`,
       subject: 'New order',
-      text: `Product: ${product}\nRecipient: ${recipient.name}`,
+      template: 'newOrder',
+      context: {
+        deliveryman: deliveryman.name,
+        recipient: recipient.name,
+        date: formattedDate,
+        street: recipient.street,
+        number: recipient.number,
+        address_complement: recipient.address_complement,
+        neighborhood: recipient.neighborhood,
+        zip_code: recipient.zip_code,
+        city: recipient.city,
+        state: recipient.state,
+      },
     });
 
     return res.json(order);
