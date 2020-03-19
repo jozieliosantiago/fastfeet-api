@@ -2,6 +2,7 @@ import * as Yup from 'yup';
 import Order from '../models/Order';
 import Recipient from '../models/Recipient';
 import Deliveryman from '../models/Deliveryman';
+import Mail from '../../lib/Mail';
 
 class OrderController {
   async index(req, res) {
@@ -36,6 +37,12 @@ class OrderController {
       recipient_id,
     });
 
+    Mail.sendmail({
+      to: `${deliveryman.name} <${deliveryman.email}>`,
+      subject: 'New order',
+      text: `Product: ${product}\nRecipient: ${recipient.name}`,
+    });
+
     return res.json(order);
   }
 
@@ -44,7 +51,6 @@ class OrderController {
       product: Yup.string().min(5),
       recipient_id: Yup.number().min(1),
       deliveryman_id: Yup.number().min(1),
-      // signature_id: Yup.number().min(1),
       canceled_at: Yup.date(),
       start_date: Yup.date(),
       end_date: Yup.date(),
