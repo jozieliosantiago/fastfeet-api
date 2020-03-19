@@ -19,6 +19,10 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
+      neighborhood: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
       address_complement: {
         type: Sequelize.STRING,
       },
