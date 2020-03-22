@@ -17,7 +17,7 @@ class DeliverymanOrderController {
         canceled_at: null,
       },
       order: ['createdAt'],
-      attributes: ['product', 'start_date', 'createdAt', 'updatedAt'],
+      attributes: ['id', 'product', 'start_date', 'createdAt', 'updatedAt'],
       include: [
         {
           model: Deliveryman,
