@@ -7,6 +7,7 @@ import DeliverymanController from './app/controllers/DeliverymanController';
 import OrderController from './app/controllers/OrderController';
 import DeliverymanOrderController from './app/controllers/DeliverymanOrderController';
 import DeliveriesMadeController from './app/controllers/DeliveriesMadeController';
+import StartDeliveryController from './app/controllers/StartDeliveryController';
 import authMiddleware from './app/middlewares/auth';
 import multerConfig from './config/multer';
 
@@ -18,6 +19,10 @@ routes.post('/session', SessionController.store);
 // deliveryman orders routes
 routes.get('/deliveryman/:id/deliveries', DeliverymanOrderController.index);
 routes.get('/deliveryman/:id/deliveries/made', DeliveriesMadeController.index);
+routes.put(
+  '/deliveryman/:id/deliveries/start/:deliverieId',
+  StartDeliveryController.update
+);
 
 routes.use(authMiddleware);
 routes.get('/recipients', RecipientController.index);
