@@ -8,6 +8,7 @@ import OrderController from './app/controllers/OrderController';
 import DeliverymanOrderController from './app/controllers/DeliverymanOrderController';
 import DeliveriesMadeController from './app/controllers/DeliveriesMadeController';
 import StartDeliveryController from './app/controllers/StartDeliveryController';
+import EndDeliveryController from './app/controllers/EndDeliveryController';
 import authMiddleware from './app/middlewares/auth';
 import multerConfig from './config/multer';
 
@@ -22,6 +23,11 @@ routes.get('/deliveryman/:id/deliveries/made', DeliveriesMadeController.index);
 routes.put(
   '/deliveryman/:id/deliveries/start/:deliverieId',
   StartDeliveryController.update
+);
+routes.put(
+  '/deliveryman/:id/deliveries/end/:deliverieId',
+  upload.single('signature'),
+  EndDeliveryController.update
 );
 
 routes.use(authMiddleware);
