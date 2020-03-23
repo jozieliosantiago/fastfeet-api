@@ -17,7 +17,7 @@ const upload = multer(multerConfig);
 
 routes.post('/session', SessionController.store);
 
-// deliveryman orders routes
+// deliverymen orders routes
 routes.get('/deliveryman/:id/deliveries', DeliverymanOrderController.index);
 routes.get('/deliveryman/:id/deliveries/made', DeliveriesMadeController.index);
 routes.put(
