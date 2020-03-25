@@ -21,6 +21,7 @@ class DeliveriesMadeController {
       },
       order: ['createdAt'],
       attributes: [
+        'id',
         'product',
         'start_date',
         'end_date',
