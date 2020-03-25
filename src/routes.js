@@ -11,6 +11,7 @@ import StartDeliveryController from './app/controllers/StartDeliveryController';
 import EndDeliveryController from './app/controllers/EndDeliveryController';
 import DeliveryProblemController from './app/controllers/DeliveryProblemController';
 import DeliveryProblemByOrderIdController from './app/controllers/DeliveryProblemByOrderIdController';
+import CancelDeliveryController from './app/controllers/CancelDeliveryController';
 import authMiddleware from './app/middlewares/auth';
 import multerConfig from './config/multer';
 
@@ -36,6 +37,10 @@ routes.put(
 routes.get('/delivery/problems', DeliveryProblemController.index);
 routes.post('/delivery/:id/problems', DeliveryProblemController.store);
 routes.get('/delivery/:id/problems', DeliveryProblemByOrderIdController.index);
+routes.put(
+  '/delivery/problem/:id/cancel-delivery',
+  CancelDeliveryController.update
+);
 
 routes.use(authMiddleware);
 routes.get('/recipients', RecipientController.index);
