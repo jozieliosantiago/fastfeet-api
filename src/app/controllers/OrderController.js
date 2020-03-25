@@ -7,8 +7,35 @@ import NewOrderMail from '../jobs/NewOrderMail';
 
 class OrderController {
   async index(req, res) {
-    const orders = await Order.findAll();
-    return res.json(orders);
+    let page =
+      req.query.page && Number(req.query.page) > 0 ? req.query.page : 1;
+    const limit = req.query.limit ? req.query.limit : 20;
+
+    const totalRecords = await Order.count();
+    const total_pages = Math.ceil(totalRecords / limit);
+
+    if (Number(page) > total_pages) page = total_pages;
+
+    const response = {
+      total_records: totalRecords,
+      total_pages,
+      page: Number(page),
+      next_page:
+        Number(page) === Math.ceil(totalRecords / limit)
+          ? null
+          : Number(page) + 1,
+      prev_page: Number(page) === 1 ? null : Number(page) - 1,
+    };
+
+    const orders = await Order.findAll({
+      limit,
+      offset: (page - 1) * limit,
+      order: ['createdAt'],
+    });
+
+    response.data = orders;
+
+    return res.json(response);
   }
 
   async store(req, res) {

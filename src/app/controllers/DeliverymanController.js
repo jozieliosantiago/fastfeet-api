@@ -4,8 +4,41 @@ import File from '../models/File';
 
 class DeliverymanController {
   async index(req, res) {
-    const deliverymanList = await Deliveryman.findAll();
-    return res.json(deliverymanList);
+    let page =
+      req.query.page && Number(req.query.page) > 0 ? req.query.page : 1;
+    const limit = req.query.limit ? req.query.limit : 20;
+
+    const totalRecords = await Deliveryman.count();
+    const total_pages = Math.ceil(totalRecords / limit);
+
+    if (Number(page) > total_pages) page = total_pages;
+
+    const response = {
+      total_records: totalRecords,
+      total_pages,
+      page: Number(page),
+      next_page:
+        Number(page) === Math.ceil(totalRecords / limit)
+          ? null
+          : Number(page) + 1,
+      prev_page: Number(page) === 1 ? null : Number(page) - 1,
+    };
+
+    const deliverymanList = await Deliveryman.findAll({
+      order: ['createdAt'],
+      limit,
+      offset: (page - 1) * limit,
+      include: [
+        {
+          model: File,
+          as: 'avatar',
+        },
+      ],
+    });
+
+    response.data = deliverymanList;
+
+    return res.json(response);
   }
 
   async store(req, res) {
