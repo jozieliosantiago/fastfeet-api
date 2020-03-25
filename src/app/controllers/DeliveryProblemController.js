@@ -6,7 +6,13 @@ import Order from '../models/Order';
 class DeliveryProblemController {
   async index(req, res) {
     const deliveryProblems = await DeliveryProblem.findAll({
-      attributes: ['delivery_id', 'description', 'createdAt', 'updatedAt'],
+      attributes: [
+        'id',
+        'delivery_id',
+        'description',
+        'createdAt',
+        'updatedAt',
+      ],
     });
     return res.json(deliveryProblems);
   }
