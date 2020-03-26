@@ -6,5 +6,4 @@
   FastFeet API
 </h3>
 
-
-[Documentação] (https://documenter.getpostman.com/view/2922382/SzYUagWm?version=latest)
+[Documentação](https://documenter.getpostman.com/view/2922382/SzYUagWm?version=latest)
