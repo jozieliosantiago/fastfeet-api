@@ -1,4 +1,5 @@
 import * as Yup from 'yup';
+import { Op } from 'sequelize';
 import Order from '../models/Order';
 import Recipient from '../models/Recipient';
 import Deliveryman from '../models/Deliveryman';
@@ -10,28 +11,42 @@ class OrderController {
     let page =
       req.query.page && Number(req.query.page) > 0 ? req.query.page : 1;
     const limit = req.query.limit ? req.query.limit : 20;
+    const { filter } = req.query;
 
     const totalRecords = await Order.count();
     const total_pages = Math.ceil(totalRecords / limit);
 
-    if (Number(page) > total_pages) page = total_pages;
+    if (totalRecords) {
+      if (Number(page) > total_pages && Number(page) > 1) page = total_pages;
+    } else {
+      page = 1;
+    }
 
     const response = {
       total_records: totalRecords,
       total_pages,
       page: Number(page),
       next_page:
-        Number(page) === Math.ceil(totalRecords / limit)
+        Number(page) === Math.ceil(totalRecords / limit) || totalRecords === 0
           ? null
           : Number(page) + 1,
       prev_page: Number(page) === 1 ? null : Number(page) - 1,
     };
 
-    const orders = await Order.findAll({
+    const findParams = {
       limit,
       offset: (page - 1) * limit,
       order: ['createdAt'],
-    });
+    };
+
+    if (filter)
+      findParams.where = {
+        product: {
+          [Op.iLike]: `%${filter}%`,
+        },
+      };
+
+    const orders = await Order.findAll(findParams);
 
     response.data = orders;
 
