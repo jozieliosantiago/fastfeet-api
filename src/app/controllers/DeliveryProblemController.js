@@ -12,7 +12,11 @@ class DeliveryProblemController {
     const totalRecords = await DeliveryProblem.count();
     const total_pages = Math.ceil(totalRecords / limit);
 
-    if (Number(page) > total_pages) page = total_pages;
+    if (totalRecords) {
+      if (Number(page) > total_pages && Number(page) > 1) page = total_pages;
+    } else {
+      page = 1;
+    }
 
     const response = {
       total_records: totalRecords,
