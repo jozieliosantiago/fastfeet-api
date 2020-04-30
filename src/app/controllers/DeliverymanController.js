@@ -1,4 +1,5 @@
 import * as Yup from 'yup';
+import { Op } from 'sequelize';
 import Deliveryman from '../models/Deliveryman';
 import File from '../models/File';
 
@@ -7,6 +8,7 @@ class DeliverymanController {
     let page =
       req.query.page && Number(req.query.page) > 0 ? req.query.page : 1;
     const limit = req.query.limit ? req.query.limit : 20;
+    const { filter } = req.query;
 
     const totalRecords = await Deliveryman.count();
     const total_pages = Math.ceil(totalRecords / limit);
@@ -28,7 +30,7 @@ class DeliverymanController {
       prev_page: Number(page) === 1 ? null : Number(page) - 1,
     };
 
-    const deliverymanList = await Deliveryman.findAll({
+    const findParams = {
       order: ['createdAt'],
       limit,
       offset: (page - 1) * limit,
@@ -38,7 +40,16 @@ class DeliverymanController {
           as: 'avatar',
         },
       ],
-    });
+    };
+
+    if (filter)
+      findParams.where = {
+        name: {
+          [Op.iLike]: `%${filter}%`,
+        },
+      };
+
+    const deliverymanList = await Deliveryman.findAll(findParams);
 
     response.data = deliverymanList;
 
