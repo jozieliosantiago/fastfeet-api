@@ -1,4 +1,5 @@
 import * as Yup from 'yup';
+import { Op } from 'sequelize';
 import Recipient from '../models/Recipient';
 
 class RecipientController {
@@ -6,6 +7,7 @@ class RecipientController {
     let page =
       req.query.page && Number(req.query.page) > 0 ? req.query.page : 1;
     const limit = req.query.limit ? req.query.limit : 20;
+    const { filter } = req.query;
 
     const totalRecords = await Recipient.count();
     const total_pages = Math.ceil(totalRecords / limit);
@@ -27,11 +29,20 @@ class RecipientController {
       prev_page: Number(page) === 1 ? null : Number(page) - 1,
     };
 
-    const recipients = await Recipient.findAll({
+    const findParams = {
       limit,
       offset: (page - 1) * limit,
       order: ['createdAt'],
-    });
+    };
+
+    if (filter)
+      findParams.where = {
+        name: {
+          [Op.iLike]: `%${filter}%`,
+        },
+      };
+
+    const recipients = await Recipient.findAll(findParams);
 
     response.data = recipients;
 
