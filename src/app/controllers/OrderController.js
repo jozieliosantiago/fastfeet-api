@@ -37,6 +37,18 @@ class OrderController {
       limit,
       offset: (page - 1) * limit,
       order: ['createdAt'],
+      include: [
+        {
+          model: Deliveryman,
+          as: 'deliveryman',
+          attributes: ['name'],
+        },
+        {
+          model: Recipient,
+          as: 'recipient',
+          attributes: ['name', 'city', 'state'],
+        },
+      ],
     };
 
     if (filter)
