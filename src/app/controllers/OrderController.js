@@ -13,7 +13,16 @@ class OrderController {
     const limit = req.query.limit ? req.query.limit : 20;
     const { filter } = req.query;
 
-    const totalRecords = await Order.count();
+    const totalRecords = filter
+      ? await Order.count({
+          where: {
+            product: {
+              [Op.iLike]: `%${filter}%`,
+            },
+          },
+        })
+      : await Order.count();
+
     const total_pages = Math.ceil(totalRecords / limit);
 
     if (totalRecords) {
@@ -21,17 +30,6 @@ class OrderController {
     } else {
       page = 1;
     }
-
-    const response = {
-      total_records: totalRecords,
-      total_pages,
-      page: Number(page),
-      next_page:
-        Number(page) === Math.ceil(totalRecords / limit) || totalRecords === 0
-          ? null
-          : Number(page) + 1,
-      prev_page: Number(page) === 1 ? null : Number(page) - 1,
-    };
 
     const findParams = {
       limit,
@@ -59,6 +57,17 @@ class OrderController {
       };
 
     const orders = await Order.findAll(findParams);
+
+    const response = {
+      total_records: totalRecords,
+      total_pages,
+      page: Number(page),
+      next_page:
+        Number(page) === Math.ceil(totalRecords / limit) || totalRecords === 0
+          ? null
+          : Number(page) + 1,
+      prev_page: Number(page) === 1 ? null : Number(page) - 1,
+    };
 
     response.data = orders;
 
