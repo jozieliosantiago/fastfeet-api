@@ -3,6 +3,7 @@ import { Op } from 'sequelize';
 import Order from '../models/Order';
 import Recipient from '../models/Recipient';
 import Deliveryman from '../models/Deliveryman';
+import File from '../models/File';
 import Queue from '../../lib/Queue';
 import NewOrderMail from '../jobs/NewOrderMail';
 
@@ -53,6 +54,10 @@ class OrderController {
             'number',
             'zip_code',
           ],
+        },
+        {
+          model: File,
+          as: 'signature',
         },
       ],
     };
