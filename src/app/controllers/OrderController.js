@@ -3,6 +3,7 @@ import { Op } from 'sequelize';
 import Order from '../models/Order';
 import Recipient from '../models/Recipient';
 import Deliveryman from '../models/Deliveryman';
+import DeliveryProblem from '../models/DeliveryProblem';
 import File from '../models/File';
 import Queue from '../../lib/Queue';
 import NewOrderMail from '../jobs/NewOrderMail';
@@ -169,7 +170,14 @@ class OrderController {
 
   async delete(req, res) {
     const order = await Order.findByPk(req.params.id);
+
     if (!order) return res.status(400).json({ error: 'Order not found' });
+    await DeliveryProblem.destroy({
+      where: {
+        delivery_id: order.id,
+      },
+    });
+
     await order.destroy();
     return res.json({ success: 'Order deleted' });
   }
