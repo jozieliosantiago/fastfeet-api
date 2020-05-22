@@ -110,7 +110,15 @@ class DeliverymanController {
       return res.json({ id, name, email, avatar_id });
     } catch (error) {
       const { errors } = error;
-      return res.status(400).json({ error: errors[0].message });
+
+      const { path, type } = errors[0];
+
+      return res.status(400).json({
+        error: {
+          key: `${type.replace(' ', '.')}.${path}`,
+          message: errors[0].message,
+        },
+      });
     }
   }
 
