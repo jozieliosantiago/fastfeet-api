@@ -105,9 +105,13 @@ class DeliverymanController {
     if (!deliveryman)
       return res.status(400).json({ error: 'Unable to update record' });
 
-    const { id, name, email, avatar_id } = await deliveryman.update(req.body);
-
-    return res.json({ id, name, email, avatar_id });
+    try {
+      const { id, name, email, avatar_id } = await deliveryman.update(req.body);
+      return res.json({ id, name, email, avatar_id });
+    } catch (error) {
+      const { errors } = error;
+      return res.status(400).json({ error: errors[0].message });
+    }
   }
 
   async delete(req, res) {
