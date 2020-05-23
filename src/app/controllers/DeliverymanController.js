@@ -56,6 +56,31 @@ class DeliverymanController {
     return res.json(response);
   }
 
+  async indexById(req, res) {
+    const { id } = req.params;
+
+    const findParams = {
+      where: {
+        id,
+      },
+      include: [
+        {
+          model: File,
+          as: 'avatar',
+        },
+      ],
+    };
+
+    try {
+      const deliveryman = await Deliveryman.findOne(findParams);
+
+      if (deliveryman) return res.json(deliveryman);
+      return res.status(400).json({ message: 'Deliveryman not found' });
+    } catch (error) {
+      return res.status(400).json({ message: 'Erro fetching deliveryman' });
+    }
+  }
+
   async store(req, res) {
     const schema = Yup.object().shape({
       name: Yup.string().required(),
