@@ -88,6 +88,48 @@ class OrderController {
     return res.json(response);
   }
 
+  async indexById(req, res) {
+    const { id } = req.params;
+
+    const findParams = {
+      where: {
+        id,
+      },
+      include: [
+        {
+          model: Deliveryman,
+          as: 'deliveryman',
+          attributes: ['name'],
+        },
+        {
+          model: Recipient,
+          as: 'recipient',
+          attributes: [
+            'name',
+            'city',
+            'state',
+            'street',
+            'address_complement',
+            'number',
+            'zip_code',
+          ],
+        },
+        {
+          model: File,
+          as: 'signature',
+        },
+      ],
+    };
+
+    try {
+      const order = await Order.findOne(findParams);
+      if (order) return res.json(order);
+      return res.status(400).json({ message: 'User not found' });
+    } catch (error) {
+      return res.status(400).json({ message: 'Error fetching user' });
+    }
+  }
+
   async store(req, res) {
     const schema = Yup.object().shape({
       product: Yup.string().required(),
