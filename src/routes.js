@@ -42,10 +42,13 @@ routes.put(
   CancelDeliveryController.update
 );
 
+// recipients routes
 routes.use(authMiddleware);
 routes.get('/recipients', RecipientController.index);
+routes.get('/recipients/:id', RecipientController.indexById);
 routes.post('/recipients', RecipientController.store);
 routes.delete('/recipients/:id', RecipientController.delete);
+routes.put('/recipients/:id', RecipientController.update);
 
 // deliveryman routes
 routes.get('/deliveryman', DeliverymanController.index);

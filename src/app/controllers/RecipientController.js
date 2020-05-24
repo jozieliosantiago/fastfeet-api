@@ -49,6 +49,16 @@ class RecipientController {
     return res.json(response);
   }
 
+  async indexById(req, res) {
+    try {
+      const recipient = await Recipient.findByPk(req.params.id);
+      if (recipient) return res.json(recipient);
+      return res.status(400).json({ message: 'Recipient not found' });
+    } catch (error) {
+      return res.status(400).json({ message: 'Erro fetching recipient' });
+    }
+  }
+
   async store(req, res) {
     const schema = Yup.object().shape({
       name: Yup.string().required(),
@@ -80,6 +90,33 @@ class RecipientController {
     } catch (error) {
       return res.status(400).json({ message: 'Erro delete recipient' });
     }
+  }
+
+  async update(req, res) {
+    const schema = Yup.object().shape({
+      name: Yup.string().required(),
+      street: Yup.string().required(),
+      number: Yup.number().required(),
+      neighborhood: Yup.string().required(),
+      address_complement: Yup.string(),
+      state: Yup.string().required(),
+      city: Yup.string().required(),
+      zip_code: Yup.number().required(),
+    });
+
+    const recipient = await Recipient.findByPk(req.params.id);
+
+    if (!recipient)
+      return res.status(400).json({ error: 'Recipient not found' });
+
+    if (!(await schema.isValid(req.body)))
+      return res.status(400).json({ error: 'Bad Request' });
+
+    await recipient.update({
+      ...req.body,
+    });
+
+    return res.json(recipient);
   }
 }
 
