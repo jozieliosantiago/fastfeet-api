@@ -42,8 +42,12 @@ routes.put(
   CancelDeliveryController.update
 );
 
-// recipients routes
 routes.use(authMiddleware);
+routes.get('/validate/token', (req, res) => {
+  return res.json({ message: 'Valid token' });
+});
+
+// recipients routes
 routes.get('/recipients', RecipientController.index);
 routes.get('/recipients/:id', RecipientController.indexById);
 routes.post('/recipients', RecipientController.store);
