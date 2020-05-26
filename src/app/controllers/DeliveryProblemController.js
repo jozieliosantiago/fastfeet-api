@@ -40,6 +40,13 @@ class DeliveryProblemController {
         'createdAt',
         'updatedAt',
       ],
+      include: [
+        {
+          model: Order,
+          as: 'delivery',
+          attributes: ['canceled_at'],
+        },
+      ],
     });
 
     response.data = deliveryProblems;
